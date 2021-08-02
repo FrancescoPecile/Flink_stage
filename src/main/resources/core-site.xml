@@ -1,0 +1,18 @@
+<configuration>
+    <property>
+        <name>fs.s3.impl</name>
+        <value>org.apache.hadoop.fs.s3a.S3AFileSystem</value>
+    </property>
+
+    <!-- set your AWS ID using key defined in org.apache.hadoop.fs.s3a.Constants -->
+    <property>
+        <name>fs.s3a.access.key</name>
+        <value>AKIAZD43FV3QNGN6R5VF</value>
+    </property>
+
+    <!-- set your AWS access key -->
+    <property>
+        <name>fs.s3a.secret.key</name>
+        <value>pubOFXtr3qHGlV/XIDxqrTHXiMJpGWxEB+Egt9w0</value>
+    </property>
+</configuration>
