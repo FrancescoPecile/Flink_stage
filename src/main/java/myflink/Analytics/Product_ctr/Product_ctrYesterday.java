@@ -23,7 +23,7 @@ public class Product_ctrYesterday {
     public static void main(String[] args) throws Exception {
 
         DataStream<Row> resultStreamPd29 = TableToStream(resultPd29);
-        MongoDBSink_ctr mongoDBSink_ctr=new MongoDBSink_ctr("product_ctrYesterday");
+        MongoDBSink_ctr mongoDBSink_ctr=new MongoDBSink_ctr("product_ctrYesterdayPARKOUR");
         resultStreamPd29.addSink(mongoDBSink_ctr);
 
         Env.env.execute("Flink");
@@ -67,15 +67,37 @@ public class Product_ctrYesterday {
         );
 
         Table resultTable2 = Env.tableEnv.sqlQuery(
-                " SELECT BRAND AS BRAND29, WALL_ID AS WALL_ID29 , WALLGROUP_ID AS WALLGROUP_ID29, CAMPAIGN_ID AS CAMPAIGN_ID29, " +
-                        "EVENT_TYPE AS EVENT_TYPE29,ISOTIMESTAMP AS DATA29, " +
+                " SELECT BRAND, WALL_ID , WALLGROUP_ID,CAMPAIGN_ID, " +
+                        "EVENT_TYPE ,ISOTIMESTAMP AS DATA2, " +
                         " COUNT(EVENT_TYPE = 'product-impression') AS IMPRESSIONS29 " +
                         " FROM TABLE (TUMBLE(TABLE InputTable1, DESCRIPTOR(ISOTIMESTAMP), INTERVAL '20' MINUTES))"+
                         " WHERE(EVENT_TYPE= 'product-impression') " +
                         " AND PRESTOTIMESTAMP BETWEEN '2021-06-30' AND '2021-06-30 24:00:00' "+
                         " GROUP BY window_start, window_end, BRAND, WALL_ID, WALLGROUP_ID, CAMPAIGN_ID, EVENT_TYPE, ISOTIMESTAMP"
         );
-        return resultTable1.join(resultTable2);
+        Env.tableEnv.createTemporaryView("resultTable1", resultTable1);
+        Env.tableEnv.createTemporaryView("resultTable2", resultTable2);
+
+        Table resultTable3 = Env.tableEnv.sqlQuery("SELECT * FROM resultTable1 FULL OUTER JOIN resultTable2 " +
+                "ON (resultTable1.WALL_ID1 = resultTable2.WALL_ID" +
+                "AND resultTable1.BRAND1 = resultTable2.BRAND" +
+                "AND resultTable1.CAMPAIGN_ID1 = resultTable2.CAMPAIGN_ID" +
+                "AND resultTable1.WALLGROUP_ID1 = resultTable2.WALLGROUP_ID" +
+                "AND resultTable1.DATA1 = resultTable2.DATA2)");
+//
+//        Table resultTable3 = Env.tableEnv.sqlQuery("SELECT SELECT BRAND,WALL_ID ,WALLGROUP_ID,CAMPAIGN_ID,EVENT_TYPE,ISOTIMESTAMP,CLICKS29  " +
+//                " from resultTable1" +
+//                " UNION ALL " +
+//                " SELECT SELECT BRAND,WALL_ID ,WALLGROUP_ID,CAMPAIGN_ID,EVENT_TYPE,ISOTIMESTAMP,IMPRESSIONS29" +
+//                " from resultTable2");
+
+        Env.tableEnv.createTemporaryView("resultTable3", resultTable3);
+
+        return Env.tableEnv.sqlQuery("SELECT BRAND1, WALL_ID1, WALLGROUP_ID1, CAMPAIGN_ID1,DATA1, " +
+                " SUM(IMPRESSIONS29)/SUM(CLICKS29) AS PRODUCT_CTR29 " +
+                "from resultTable3 " +
+                "GROUP BY BRAND1, WALL_ID1, WALLGROUP_ID1, CAMPAIGN_ID1,DATA1");
+
     }
 
     public static DataStream<Row> TableToStream (Table n1){

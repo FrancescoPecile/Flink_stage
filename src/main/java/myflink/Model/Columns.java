@@ -12,6 +12,7 @@ public class Columns
     public Timestamp ISOTIMESTAMP;
     public String PRESTOTIMESTAMP;
 
+    public String getBRAND() { return BRAND; }
     @Override
     public String toString(){
         return BRAND  + WALL_ID +

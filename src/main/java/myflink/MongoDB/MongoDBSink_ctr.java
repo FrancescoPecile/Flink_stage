@@ -29,9 +29,6 @@ public class MongoDBSink_ctr extends RichSinkFunction<Row> {
 
                 MongoDatabase db = mongoClient.getDatabase("Flink");
                 MongoCollection collection = db.getCollection(collectionName);
-                
-                Object timestamp = value.getField(5);
-                assert timestamp instanceof java.time.LocalDateTime;
 
                 List<Document> list = new ArrayList<Document>();
                 Document doc = new Document();
@@ -39,10 +36,9 @@ public class MongoDBSink_ctr extends RichSinkFunction<Row> {
                 doc.put("WALL_ID", value.getField(1));
                 doc.put("WALLGROUP_ID", value.getField(2));
                 doc.put("CAMPAIGN_ID", value.getField(3));
-                doc.put("EVENT_TYPE", value.getField(4));
-                doc.put("ISOTIMESTAMP",timestamp.toString());
-                doc.put("IMPRESSIONS", value.getField(6));
-                doc.put("CLICKS", value.getField(13));
+                doc.put("EVENT_TYPE",value.getField(4));
+                doc.put("ISOTIMESTAMP",value.getField(4));
+                doc.put("PRODUCT_CTR", value.getField(5));
                 list.add(doc);
 
                 collection.insertMany(list);

@@ -6,14 +6,10 @@ import myflink.MapperString;
 import myflink.Model.Columns;
 import myflink.MongoDB.MongoDBSink_ctr;
 import org.apache.flink.api.java.io.TextInputFormat;
-import org.apache.flink.configuration.Configuration;
 import org.apache.flink.core.fs.Path;
 import org.apache.flink.streaming.api.datastream.DataStream;
-import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.apache.flink.table.api.Table;
-import org.apache.flink.table.api.bridge.java.StreamTableEnvironment;
 import org.apache.flink.types.Row;
-
 
 import static org.apache.flink.table.api.Expressions.$;
 
@@ -26,7 +22,7 @@ public class Product_ctrToday {
     public static void main(String[] args) throws Exception {
 
         DataStream<Row> resultStreamPd30 = TableToStream(resultPd30);
-        MongoDBSink_ctr mongoDBSink_ctr=new MongoDBSink_ctr("product_ctrToday");
+        MongoDBSink_ctr mongoDBSink_ctr=new MongoDBSink_ctr("product_ctrTodaySWITCH");
         resultStreamPd30.addSink(mongoDBSink_ctr);
 
         Env.env.execute("Flink");
@@ -76,8 +72,15 @@ public class Product_ctrToday {
                         " AND PRESTOTIMESTAMP BETWEEN '2021-06-30' AND '2021-06-30 24:00:00' "+
                         " GROUP BY window_start, window_end, BRAND, WALL_ID, WALLGROUP_ID, CAMPAIGN_ID, EVENT_TYPE, ISOTIMESTAMP"
         );
-        return resultTable1.join(resultTable2);
+
+        Env.tableEnv.createTemporaryView("resultTable1", resultTable1);
+        Env.tableEnv.createTemporaryView("resultTable2", resultTable2);
+
+        return Env.tableEnv.sqlQuery("SELECT * FROM resultTable1 LEFT JOIN resultTable2 ON resultTable2.WALL_ID30 = resultTable1.WALL_ID"
+        );
+
     }
+
     public static DataStream<Row> TableToStream (Table n1){
 
         return Env.tableEnv.toChangelogStream(n1);

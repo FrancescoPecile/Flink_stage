@@ -17,6 +17,16 @@ public class MongoDBSinkWall extends RichSinkFunction<Row> {
     MongoClient mongoClient = null;
     String collectionName;
 
+//    final StreamingFileSink<Row> sink = StreamingFileSink
+//            .forRowFormat(new Path("mongodb://127.0.0.1/Flink.streamingJob"), new SimpleStringEncoder<Row>("UTF-8"))
+//            .withRollingPolicy(
+//                    OnCheckpointRollingPolicy.builder()
+//                            .withRolloverInterval(TimeUnit.MINUTES.toMillis(15))
+//                            .withInactivityInterval(TimeUnit.MINUTES.toMillis(5))
+//                            .withMaxPartSize(1024 * 1024 * 1024)
+//                            .build())
+//            .build();
+
     public MongoDBSinkWall(String collectionName) {
         this.collectionName=collectionName;
     }
@@ -28,7 +38,7 @@ public class MongoDBSinkWall extends RichSinkFunction<Row> {
             if (mongoClient != null) {
 
                 MongoDatabase db = mongoClient.getDatabase("Flink");
-                MongoCollection collection = db.getCollection(collectionName);
+                MongoCollection<Document> collection = db.getCollection(collectionName);
                 
                 Object timestamp = value.getField(5);
                 assert timestamp instanceof java.time.LocalDateTime;
