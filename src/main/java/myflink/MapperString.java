@@ -14,7 +14,7 @@ public class MapperString {
             Gson gson = new Gson();
             Columns columns =  gson.fromJson(s,Columns.class);
             return columns;
-        }).assignTimestampsAndWatermarks(WatermarkStrategy.forBoundedOutOfOrderness(Duration.ofSeconds(30)));
+        });
         return Data;
     }
 }

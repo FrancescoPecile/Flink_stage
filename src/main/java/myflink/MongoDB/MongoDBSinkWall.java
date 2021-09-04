@@ -17,16 +17,6 @@ public class MongoDBSinkWall extends RichSinkFunction<Row> {
     MongoClient mongoClient = null;
     String collectionName;
 
-//    final StreamingFileSink<Row> sink = StreamingFileSink
-//            .forRowFormat(new Path("mongodb://127.0.0.1/Flink.streamingJob"), new SimpleStringEncoder<Row>("UTF-8"))
-//            .withRollingPolicy(
-//                    OnCheckpointRollingPolicy.builder()
-//                            .withRolloverInterval(TimeUnit.MINUTES.toMillis(15))
-//                            .withInactivityInterval(TimeUnit.MINUTES.toMillis(5))
-//                            .withMaxPartSize(1024 * 1024 * 1024)
-//                            .build())
-//            .build();
-
     public MongoDBSinkWall(String collectionName) {
         this.collectionName=collectionName;
     }
@@ -51,7 +41,7 @@ public class MongoDBSinkWall extends RichSinkFunction<Row> {
                 doc.put("CAMPAIGN_ID", value.getField(3));
                 doc.put("EVENT_TYPE", value.getField(4));
                 doc.put("ISOTIMESTAMP",timestamp.toString());
-                doc.put("IMPRESSIONS", value.getField(6));
+                doc.put("IMPRESSIONS", value.getField(5));
                 list.add(doc);
 
                 collection.insertMany(list);

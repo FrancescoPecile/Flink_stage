@@ -10,7 +10,7 @@ import org.apache.flink.streaming.api.datastream.DataStream;
 import org.apache.flink.table.api.Table;
 import org.apache.flink.types.Row;
 import myflink.Date;
-
+//TUMBLING WINDOWS CON TIMESTAMP ROWTIME
 import static org.apache.flink.table.api.Expressions.$;
 
 public class Wall_impressionsYesterday {

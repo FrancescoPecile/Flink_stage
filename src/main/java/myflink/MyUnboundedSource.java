@@ -21,6 +21,10 @@
 //        }
 //    }
 //
+//    private DataStream<Row> getNextRecordOrNull() {
+//
+//    }
+//
 //    @Override
 //    public void cancel() {
 //        running = false;

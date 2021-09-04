@@ -36,9 +36,8 @@ public class MongoDBSink_ctr extends RichSinkFunction<Row> {
                 doc.put("WALL_ID", value.getField(1));
                 doc.put("WALLGROUP_ID", value.getField(2));
                 doc.put("CAMPAIGN_ID", value.getField(3));
-                doc.put("EVENT_TYPE",value.getField(4));
-                doc.put("ISOTIMESTAMP",value.getField(4));
-                doc.put("PRODUCT_CTR", value.getField(5));
+                doc.put("DATA2",value.getField(4));
+                doc.put("PRODUCT_CTR29", value.getField(5));
                 list.add(doc);
 
                 collection.insertMany(list);
